@@ -1,4 +1,4 @@
-package com.inditex.testjava2020.esinditexrates.dto;
+package com.inditex.testjava2020.esinditexrates.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RateResponseDto implements IResponseDto{
+public class RateResponseDto {
     private long brandId;
 
     private long productId;
@@ -23,9 +23,4 @@ public class RateResponseDto implements IResponseDto{
     private LocalDateTime endDate;
 
     private double price;
-
-    @Override
-    public  ResponseDto getResponse(int internalCode, String message){
-        return new ResponseDto(internalCode,message,this);
-    }
 }

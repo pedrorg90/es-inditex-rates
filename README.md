@@ -13,6 +13,10 @@ Para la base de datos h2 se utiliza el siguiente JDBC URL:
 
 - `jdbc:h2:mem:es-inditex`
 
+URL del Swagger:
+
+- `http://localhost:8080/swagger-ui/index.html`
+
 # Detalle del microservicio:
 
 ## es-inditex-rates
@@ -33,37 +37,42 @@ Validaciónes:
 
 ### Response
 
+Status: 200 OK
 ```json
 {
-  "internalCode": 200,
-  "message": "Success",
-  "data": {
-    "brandId": 1,
-    "productId": 35455,
-    "priceList": 1,
-    "startDate": "2020-06-14-00.00.00",
-    "endDate": "2020-12-31-23.59.59",
-    "price": 35.5
-  }
+  "brandId": 1,
+  "productId": 35455,
+  "priceList": 1,
+  "startDate": "2020-06-14-00.00.00",
+  "endDate": "2020-12-31-23.59.59",
+  "price": 35.5
 }
 ```
+
+curl --location --request GET 'http://localhost:8080/rates/top?date=2020-06-14-00.00.00&brandId=1&productId=35455'
+
 Mensaje de error en caso de no encontrar tarifa:
 
+Status: 404 Not Found
 ```json
 {
-  "internalCode": 404,
-  "message": "Rate not found",
-  "data": null
 }
 ```
 
+curl --location --request GET 'http://localhost:8080/rates/top?date=2020-06-14-00.00.00&brandId=1&productId=354555'
+
 Mensaje de error en caso de error en formato de fecha:
+
+Status: 400 Bad Request
 ```json
 {
-"internalCode": 400,
-"message": "Date format error",
-"data": null
+  "timestamp": "2024-06-27T22:02:45.248+00:00",
+  "status": 400,
+  "error": "Bad Request",
+  "path": "/rates/top"
 }
 ```
+
+curl --location --request GET 'http://localhost:8080/rates/top?date=2020-06-14-00:00:00&brandId=1&productId=354555'
 
 

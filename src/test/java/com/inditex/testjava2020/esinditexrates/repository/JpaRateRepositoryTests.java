@@ -1,7 +1,8 @@
 package com.inditex.testjava2020.esinditexrates.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import com.inditex.testjava2020.esinditexrates.entity.Rate;
+import com.inditex.testjava2020.esinditexrates.domain.model.Rate;
+import com.inditex.testjava2020.esinditexrates.domain.repository.IRateRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @DataJpaTest
-public class IRateRepositoryTests {
+public class JpaRateRepositoryTests {
 
     @Autowired
     private IRateRepository repository;

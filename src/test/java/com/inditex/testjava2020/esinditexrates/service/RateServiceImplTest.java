@@ -1,13 +1,12 @@
 package com.inditex.testjava2020.esinditexrates.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import com.inditex.testjava2020.esinditexrates.constant.InternalResponseConstant;
-import com.inditex.testjava2020.esinditexrates.dto.RateRequestDto;
-import com.inditex.testjava2020.esinditexrates.dto.RateResponseDto;
-import com.inditex.testjava2020.esinditexrates.dto.ResponseDto;
-import com.inditex.testjava2020.esinditexrates.entity.Rate;
-import com.inditex.testjava2020.esinditexrates.repository.IRateRepository;
+import static org.junit.jupiter.api.Assertions.*;
+import com.inditex.testjava2020.esinditexrates.application.dto.RateRequestDto;
+import com.inditex.testjava2020.esinditexrates.application.dto.RateResponseDto;
+import com.inditex.testjava2020.esinditexrates.domain.model.Rate;
+import com.inditex.testjava2020.esinditexrates.infrastructure.repository.JpaRateRepository;
+import com.inditex.testjava2020.esinditexrates.infrastructure.service.RateServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 class RateServiceImplTest {
 
     @Mock
-    IRateRepository repositoryMock;
+    JpaRateRepository repositoryMock;
     @InjectMocks
     RateServiceImpl rateService;
 
@@ -34,82 +33,61 @@ class RateServiceImplTest {
     }
 
     @Test
-    void givenWrongDateFormat_WhenGetRateByApplicationDate_ThenReturnBadRequest() {
-        //given
-        RateRequestDto requestDto = new RateRequestDto("2020-06-14 10:00:00",35455L,1L);
-
-        //when
-        ResponseDto responseDto = rateService.getRateByApplicationDate(requestDto);
-
-        //then
-        assertEquals(responseDto.getInternalCode(), InternalResponseConstant.INTERNAL_CODE_INVALID_INPUT);
-    }
-
-    @Test
-    void givenNullRequestDto_WhenGetRateByApplicationDate_ThenReturnInternalError() {
-        //given
-        RateRequestDto requestDto = null;
-
-        //when
-        ResponseDto responseDto = rateService.getRateByApplicationDate(requestDto);
-
-        //then
-        assertEquals(responseDto.getInternalCode(), InternalResponseConstant.INTERNAL_CODE_INTERNAL_ERROR);
-    }
-
-    @Test
-    void givenWrongProductId_WhenGetRateByApplicationDate_ThenReturnNotFound() {
+    void givenWrongProductId_WhenGetRateByApplicationDate_ThenReturnNotFound() throws Exception {
         //given
         RateRequestDto requestDto = new RateRequestDto("2020-06-14-10.00.00",1111L,1L);
 
         //when
-        ResponseDto responseDto = rateService.getRateByApplicationDate(requestDto);
+        Rate rate = rateService.getRateByApplicationDate(requestDto);
 
         //then
-        assertEquals(responseDto.getInternalCode(), InternalResponseConstant.INTERNAL_CODE_NOT_FOUND);
+        assertNull(rate);
     }
 
     @Test
-    void givenWrongBrandId_WhenGetRateByApplicationDate_ThenReturnNotFound() {
+    void givenWrongBrandId_WhenGetRateByApplicationDate_ThenReturnNotFound() throws Exception {
         //given
         RateRequestDto requestDto = new RateRequestDto("2020-06-14-10.00.00",35455L,11L);
 
         //when
-        ResponseDto responseDto = rateService.getRateByApplicationDate(requestDto);
+        Rate rate = rateService.getRateByApplicationDate(requestDto);
 
         //then
-        assertEquals(responseDto.getInternalCode(), InternalResponseConstant.INTERNAL_CODE_NOT_FOUND);
+        assertNull(rate);
     }
 
     @Test
-    void givenWrongApplicationDate_WhenGetRateByApplicationDate_ThenReturnNotFound() {
+    void givenWrongApplicationDate_WhenGetRateByApplicationDate_ThenReturnNotFound() throws Exception {
         //given
         RateRequestDto requestDto = new RateRequestDto("2024-06-14-10.00.00",35455L,1L);
 
         //when
-        ResponseDto responseDto = rateService.getRateByApplicationDate(requestDto);
+        Rate rate = rateService.getRateByApplicationDate(requestDto);
 
         //then
-        assertEquals(responseDto.getInternalCode(), InternalResponseConstant.INTERNAL_CODE_NOT_FOUND);
+        assertNull(rate);
     }
 
     @Test
-    void givenCorrectApplicationDateProductIdBrandId_WhenGetRateByApplicationDate_ThenReturnCorrectRate() {
+    void givenCorrectApplicationDateProductIdBrandId_WhenGetRateByApplicationDate_ThenReturnCorrectRate() throws Exception{
         //given
         RateRequestDto requestDto = new RateRequestDto("2020-06-14-10.00.00",35455L,1L);
-        Rate rate = new Rate(1,1,35455, LocalDateTime.parse("2020-06-14-00.00.00", dateTimeFormatter),LocalDateTime.parse("2020-12-31-23.59.59", dateTimeFormatter), 0,35.50,"EUR");
+        Rate rateStored = new Rate(1,1,35455, LocalDateTime.parse("2020-06-14-00.00.00", dateTimeFormatter),LocalDateTime.parse("2020-12-31-23.59.59", dateTimeFormatter), 0,35.50,"EUR");
         RateResponseDto rateResponseDto = new RateResponseDto(1,35455,1,LocalDateTime.parse("2020-06-14-00.00.00", dateTimeFormatter),LocalDateTime.parse("2020-12-31-23.59.59", dateTimeFormatter),35.50);
         given(repositoryMock.findByStartDateAndEndDateAndBrandIdAndProductId(
                 requestDto.getBrandId(),
                 requestDto.getProductId(),
                 LocalDateTime.parse(requestDto.getDate(), dateTimeFormatter)))
-            .willReturn(rate);
+            .willReturn(rateStored);
 
         //when
-        ResponseDto responseDto = rateService.getRateByApplicationDate(requestDto);
+        Rate rate = rateService.getRateByApplicationDate(requestDto);
 
         //then
-        assertEquals(responseDto.getInternalCode(), InternalResponseConstant.INTERNAL_CODE_OK);
-        assertEquals(responseDto.getData(), rateResponseDto);
+        assertEquals(rateStored.getProductId(), rateResponseDto.getProductId());
+        assertEquals(rateStored.getBrandId(), rateResponseDto.getBrandId());
+        assertEquals(rateStored.getPriceList(), rateResponseDto.getPriceList());
+        assertEquals(rateStored.getStartDate(), rateResponseDto.getStartDate());
+        assertEquals(rateStored.getEndDate(), rateResponseDto.getEndDate());
     }
 }

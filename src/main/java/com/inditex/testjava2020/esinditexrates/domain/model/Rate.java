@@ -1,4 +1,4 @@
-package com.inditex.testjava2020.esinditexrates.entity;
+package com.inditex.testjava2020.esinditexrates.domain.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

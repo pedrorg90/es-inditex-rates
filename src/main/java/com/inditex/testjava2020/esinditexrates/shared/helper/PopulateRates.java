@@ -1,7 +1,7 @@
-package com.inditex.testjava2020.esinditexrates.helper;
+package com.inditex.testjava2020.esinditexrates.shared.helper;
 
-import com.inditex.testjava2020.esinditexrates.entity.Rate;
-import com.inditex.testjava2020.esinditexrates.repository.IRateRepository;
+import com.inditex.testjava2020.esinditexrates.domain.model.Rate;
+import com.inditex.testjava2020.esinditexrates.domain.repository.IRateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
